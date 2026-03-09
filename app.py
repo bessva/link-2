@@ -114,7 +114,7 @@ st.markdown("""
     border-color: #58a6ff !important; color: #58a6ff !important; }
 [data-testid="stSidebar"] .stButton button,
 [data-testid="stSidebar"] .stButton button p {
-    font-size: 15px !important;
+    font-size: 12px !important;
     height: auto !important;
     padding: 5px 4px !important;
     white-space: normal !important;
