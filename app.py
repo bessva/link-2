@@ -681,7 +681,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ── Поле ввода ────────────────────────────────────────────
 
 with st.form("chat_form", clear_on_submit=True):
-    col_in, col_btn = st.columns([6, 1])
+    col_in, col_btn, col_skip = st.columns([5, 1, 1])
     with col_in:
         user_input = st.text_input(
             "",
@@ -690,13 +690,15 @@ with st.form("chat_form", clear_on_submit=True):
         )
     with col_btn:
         submitted = st.form_submit_button("Отправить", use_container_width=True)
+    with col_skip:
+        skipped = st.form_submit_button("Пропустить", use_container_width=True)
 
 
 # ============================================================
 # 🔄 ОБРАБОТКА ВВОДА
 # ============================================================
 
-if submitted and user_input.strip():
+if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "new_station"):
     mode = st.session_state.mode
 
     # ── Автоопределение режима по тексту ─────────────────
@@ -713,8 +715,29 @@ if submitted and user_input.strip():
 
     # ── РЕЖИМ: НОВАЯ СТАНЦИЯ ──────────────────────────────
     if mode == "new_station":
-        profile = st.session_state.station_profile or new_profile()
-        step    = get_next_question(profile)
+      profile = st.session_state.station_profile or new_profile()
+      step    = get_next_question(profile)
+
+    # Обработка кнопки "Пропустить"
+      if skipped:
+        if step is None:
+            st.session_state.history.append(("Пропустить", "Все вопросы уже отвечены.", "new_station"))
+        elif step.get("default") is not None:
+            profile[step["key"]] = step["default"]
+            profile = apply_auto_fields(profile)
+            next_step = get_next_question(profile)
+            if next_step:
+                answer = f"Пропущено, использую значение по умолчанию: **{step['default']}**\n\n{format_question(next_step)}"
+            else:
+                answer = (f"Пропущено. Все данные собраны.\n\n"
+                          f"{profile_summary_text(profile)}\n\n"
+                          "Напишите что угодно для запуска расчёта.")
+            st.session_state.station_profile = profile
+            st.session_state.history.append(("Пропустить", answer, "new_station"))
+        else:
+            answer = f"⚠️ Этот вопрос обязательный, пропустить нельзя.\n\n{format_question(step)}"
+            st.session_state.history.append(("Пропустить", answer, "new_station"))
+        st.rerun()
 
         if step is None:
             # Все данные собраны → запускаем расчёт
