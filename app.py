@@ -483,7 +483,6 @@ MODE_SWITCH_COMMANDS = {
     "analyst":     ["база", "анализ", "аналитик", "данные станций", "из базы"],
     "new_station": ["новая станция", "новый расчёт", "рассчитать станцию", "начать расчёт"],
     "calc":        ["калькулятор", "ручной расчёт", "одна формула"],
-    "station_qa":  ["вопросы по станции", "спросить по станции", "q&a"],
 }
 
 def detect_mode_switch(user_input: str) -> str | None:
@@ -591,15 +590,6 @@ with st.sidebar:
             answer = ("Переключился в режим расчёта новой станции.\n\n" +
                       format_question(first_step)) if first_step else "—"
             st.session_state.history.append(("🏭 Новая станция", answer, "new_station"))
-            st.rerun()
-        if st.button("💬 Q&A по станции", use_container_width=True,
-                     disabled=st.session_state.station_results is None):
-            st.session_state.mode = "station_qa"
-            st.session_state.calc_state = None
-            name = (st.session_state.station_results or {}).get("station_name", "—")
-            st.session_state.history.append(("💬 Вопросы по станции",
-                f"Переключился в режим вопросов по станции **{name}**.",
-                "new_station"))
             st.rerun()
 
     # Станции из базы
