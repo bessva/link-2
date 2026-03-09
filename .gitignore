@@ -1,23 +1,17 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
 .env
+venv/
 
-# IDE
-.vscode/
-.idea/
-
-# Streamlit
+# Автоматически создаваемые папки
+vector_db
 .streamlit/
 
-# OS
-.DS_Store
-Thumbs.db
+# Данные (опционально — если конфиденциальные)
+# data/            
+# knowledge/     
 
-# Excel временные файлы
+# Временные файлы
 ~$*.xlsx
+.DS_Store
