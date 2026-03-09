@@ -107,10 +107,21 @@ st.markdown("""
     box-shadow: 0 0 0 3px rgba(88,166,255,0.1) !important; }
 .stButton button { background-color: #21262d !important; color: #c9d1d9 !important;
     border: 1px solid #30363d !important; border-radius: 6px !important;
-    font-family: 'Montserrat', sans-serif !important; font-size: 12px !important;
-    letter-spacing: 0.5px !important; transition: all 0.2s !important; }
+    font-family: 'Montserrat', sans-serif !important; font-size: 11px !important;
+    letter-spacing: 0.5px !important; transition: all 0.2s !important;
+    height: 36px !important; padding: 0 8px !important; white-space: nowrap !important; }
 .stButton button:hover { background-color: #30363d !important;
     border-color: #58a6ff !important; color: #58a6ff !important; }
+[data-testid="stForm"] [data-testid="stFormSubmitButton"]:first-child button {
+    background-color: #1f6feb !important; color: #ffffff !important;
+    border-color: #58a6ff !important; }
+[data-testid="stForm"] [data-testid="stFormSubmitButton"]:first-child button:hover {
+    background-color: #388bfd !important; border-color: #79c0ff !important; }
+[data-testid="stForm"] [data-testid="stFormSubmitButton"]:last-child button {
+    background-color: rgba(33, 38, 45, 0.4) !important; color: #8b949e !important;
+    border-color: #30363d !important; }
+[data-testid="stForm"] [data-testid="stFormSubmitButton"]:last-child button:hover {
+    background-color: rgba(48, 54, 61, 0.6) !important; color: #c9d1d9 !important; }
 .mode-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px;
     padding: 16px; margin: 8px 0; cursor: pointer; transition: all 0.2s; }
 .mode-card:hover { border-color: #58a6ff; }
