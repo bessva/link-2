@@ -744,7 +744,8 @@ with st.form("chat_form", clear_on_submit=True):
 
 if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "new_station"):
     mode = st.session_state.mode
-  # Проверяем команду смены режима
+
+    # Проверяем команду смены режима
     switch_to = detect_mode_switch(user_input)
     if switch_to == "menu":
         st.session_state.mode = None
@@ -754,28 +755,22 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
             "system"))
         st.rerun()
     elif switch_to is not None:
-        if switch_to == "station_qa" and st.session_state.station_results is None:
-            st.session_state.history.append((user_input,
-                "⚠️ Нет рассчитанной станции. Сначала выполните расчёт в режиме «Новая станция».",
-                "system"))
+        st.session_state.mode = switch_to
+        st.session_state.calc_state = None
+        if switch_to == "new_station":
+            st.session_state.station_profile = new_profile()
+            first_step = get_next_question(st.session_state.station_profile)
+            answer = "Переключился в режим расчёта новой станции.\n\n" + format_question(first_step)
+        elif switch_to == "analyst":
+            answer = f"Переключился в режим анализа. Загружено {len(excel_data)} станций."
+        elif switch_to == "calc":
+            answer = "Переключился в режим калькулятора. Напишите что рассчитать."
         else:
-            st.session_state.mode = switch_to
-            st.session_state.calc_state = None
-            if switch_to == "new_station":
-                st.session_state.station_profile = new_profile()
-                first_step = get_next_question(st.session_state.station_profile)
-                answer = "Переключился в режим расчёта новой станции.\n\n" + format_question(first_step)
-            elif switch_to == "analyst":
-                answer = f"Переключился в режим анализа. Загружено {len(excel_data)} станций."
-            elif switch_to == "calc":
-                answer = "Переключился в режим калькулятора. Напишите что рассчитать."
-            elif switch_to == "station_qa":
-                name = st.session_state.station_results.get("station_name", "—")
-                answer = f"Переключился в режим вопросов по станции **{name}**."
-            st.session_state.history.append((user_input, answer, "system"))
+            answer = "Режим переключён."
+        st.session_state.history.append((user_input, answer, "system"))
         st.rerun()
 
-    # ── Автоопределение режима по тексту ─────────────────
+    # Автоопределение режима если не выбран
     if mode is None:
         q = user_input.lower()
         if any(w in q for w in ["новая станция", "рассчитать станцию", "новый расчёт"]):
@@ -789,47 +784,45 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
 
     # ── РЕЖИМ: НОВАЯ СТАНЦИЯ ──────────────────────────────
     if mode == "new_station":
-      profile = st.session_state.station_profile or new_profile()
-      step    = get_next_question(profile)
+        profile = st.session_state.station_profile or new_profile()
+        step = get_next_question(profile)
 
-    # Обработка кнопки "Пропустить"
-      if skipped:
-        if step is None:
-            st.session_state.history.append(("Пропустить", "Все вопросы уже отвечены.", "new_station"))
-        elif step.get("default") is not None:
-            profile[step["key"]] = step["default"]
-            profile = apply_auto_fields(profile)
-            next_step = get_next_question(profile)
-            if next_step:
-                answer = f"Пропущено, использую значение по умолчанию: **{step['default']}**\n\n{format_question(next_step)}"
+        # Кнопка "Пропустить"
+        if skipped:
+            if step is None:
+                st.session_state.history.append(("Пропустить", "Все вопросы уже отвечены.", "new_station"))
+            elif step.get("default") is not None:
+                profile[step["key"]] = step["default"]
+                profile = apply_auto_fields(profile)
+                next_step = get_next_question(profile)
+                if next_step:
+                    answer = f"Пропущено, использую значение по умолчанию: **{step['default']}**\n\n{format_question(next_step)}"
+                else:
+                    answer = (f"Пропущено. Все данные собраны.\n\n"
+                              f"{profile_summary_text(profile)}\n\n"
+                              "Напишите что угодно для запуска расчёта.")
+                st.session_state.station_profile = profile
+                st.session_state.history.append(("Пропустить", answer, "new_station"))
             else:
-                answer = (f"Пропущено. Все данные собраны.\n\n"
-                          f"{profile_summary_text(profile)}\n\n"
-                          "Напишите что угодно для запуска расчёта.")
-            st.session_state.station_profile = profile
-            st.session_state.history.append(("Пропустить", answer, "new_station"))
-        else:
-            answer = f"⚠️ Этот вопрос обязательный, пропустить нельзя.\n\n{format_question(step)}"
-            st.session_state.history.append(("Пропустить", answer, "new_station"))
-        st.rerun()
+                answer = f"⚠️ Этот вопрос обязательный, пропустить нельзя.\n\n{format_question(step)}"
+                st.session_state.history.append(("Пропустить", answer, "new_station"))
+            st.rerun()
 
+        # Кнопка "Отправить"
         if step is None:
-            # Все данные собраны → запускаем расчёт
             apply_defaults(profile)
             try:
                 results = run_full_calculation(profile)
                 st.session_state.station_results = results
                 st.session_state.station_context = build_gigachat_context(profile, results)
                 st.session_state.station_profile = profile
-                st.session_state.mode = "station_qa"  # переключаемся в режим Q&A по станции
+                st.session_state.mode = "station_qa"
                 answer = build_report_markdown(profile, results)
                 answer += "\n\n---\n✅ **Расчёт завершён.** Теперь вы можете задавать вопросы по станции."
             except Exception as e:
                 answer = f"❌ Ошибка расчёта: {e}"
             st.session_state.history.append((user_input, answer, "new_station"))
-
         else:
-            # Разбираем ответ
             profile = apply_auto_fields(profile)
             val, err = parse_user_answer(step, user_input)
             if err:
@@ -843,7 +836,7 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 else:
                     answer = ("✓ Принято. Все данные собраны.\n\n"
                               f"{profile_summary_text(profile)}\n\n"
-                              "Нажмите **Отправить** ещё раз (или напишите что угодно) для запуска расчёта.")
+                              "Нажмите Отправить ещё раз для запуска расчёта.")
             st.session_state.station_profile = profile
             st.session_state.history.append((user_input, answer, "new_station"))
 
@@ -860,15 +853,12 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
 
     # ── РЕЖИМ: КАЛЬКУЛЯТОР ────────────────────────────────
     elif mode == "calc":
-
-        # Уже в процессе сбора параметров
         if st.session_state.calc_state is not None:
-            cs         = st.session_state.calc_state
-            params     = cs["data"]["params"]
-            collected  = cs["collected_params"]
-            remaining  = [p for p in params if p not in collected]
-            cur_param  = remaining[0]
-
+            cs = st.session_state.calc_state
+            params = cs["data"]["params"]
+            collected = cs["collected_params"]
+            remaining = [p for p in params if p not in collected]
+            cur_param = remaining[0]
             nums = re.findall(r"[-+]?\d*\.?\d+", user_input.replace(",", "."))
             if nums:
                 collected[cur_param] = float(nums[0])
@@ -888,9 +878,7 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
             else:
                 answer = "⚠️ Введите числовое значение."
             st.session_state.history.append((user_input, answer, "calc"))
-
         else:
-            # Новый запрос на расчёт
             calc_key, calc_data = detect_calc_formula(user_input)
             if calc_key:
                 nums = [float(n) for n in re.findall(r"[-+]?\d*\.?\d+", user_input.replace(",", "."))]
@@ -907,8 +895,8 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 else:
                     first_p = params[0]
                     st.session_state.calc_state = {
-                        "key":              calc_key,
-                        "data":             calc_data,
+                        "key": calc_key,
+                        "data": calc_data,
                         "collected_params": {},
                     }
                     answer = (f"📐 Расчёт: **{calc_data['formula']}**\n\n"
@@ -920,33 +908,24 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                           "\n".join(f"- {d['label']}" for d in CALC_FORMULAS.values()))
             st.session_state.history.append((user_input, answer, "calc"))
 
-    # ── РЕЖИМ: АНАЛИТИК (Excel + KB + GigaChat) ───────────
+    # ── РЕЖИМ: АНАЛИТИК ───────────────────────────────────
     else:
         context_parts = []
-
-        # Данные из Excel
         if excel_data:
             ec = find_relevant_excel(excel_data, user_input)
             if ec:
                 context_parts.append(f"📊 ДАННЫЕ ПО СТАНЦИЯМ:\n{ec}")
-
-        # Данные из базы знаний
         if collection is not None:
             kc = search_kb(user_input, collection, st_model)
             if kc:
                 context_parts.append(f"📚 ИЗ БАЗЫ ЗНАНИЙ:\n{kc}")
-
-        # Данные рассчитанной станции (если есть)
         if st.session_state.station_context:
             context_parts.append(st.session_state.station_context)
-
         user_message = (user_input + "\n\n" + "\n\n".join(context_parts)
                         if context_parts else user_input)
-
-        source = ("both"        if len(context_parts) > 1
-                  else "excel"  if excel_data and find_relevant_excel(excel_data, user_input)
+        source = ("both" if len(context_parts) > 1
+                  else "excel" if excel_data and find_relevant_excel(excel_data, user_input)
                   else "knowledge")
-
         with st.spinner("Думаю..."):
             try:
                 answer = call_gigachat(SYSTEM_PROMPT_ANALYST, user_message,
