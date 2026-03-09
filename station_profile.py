@@ -564,7 +564,7 @@ def format_question(step: dict) -> str:
     if (default := step.get("default")) is not None:
         lines.append(f"*По умолчанию: {default} — нажмите Enter чтобы пропустить*")
 
-    return "\n".join(lines)
+    return "\n\n".join(lines)
 
 
 def is_profile_complete(profile: dict) -> bool:
