@@ -573,7 +573,7 @@ with st.sidebar:
           st.session_state.history.append(("📊 Анализ станций из базы",
               f"Переключился в режим анализа. Загружено {len(excel_data)} станций.",
               "system"))
-        st.rerun()
+          st.rerun()
       if st.button("📐 Калькулятор", use_container_width=True):
           st.session_state.mode = "calc"
           st.session_state.calc_state = None
@@ -581,7 +581,7 @@ with st.sidebar:
               "Переключился в режим калькулятора.\n"
               "Напишите что хотите рассчитать, например: «рассчитай ННЗТ для газовой станции»",
               "system"))
-        st.rerun()
+          st.rerun()
   with col_s2:
       if st.button("🏭 Новая станция", use_container_width=True):
           st.session_state.mode = "new_station"
@@ -600,7 +600,7 @@ with st.sidebar:
           st.session_state.history.append(("💬 Вопросы по станции",
               f"Переключился в режим вопросов по станции **{name}**.",
               "new_station"))
-        st.rerun()
+          st.rerun()
 
     # Станции из базы
     st.markdown('<div class="sidebar-section">Станции в базе</div>', unsafe_allow_html=True)
