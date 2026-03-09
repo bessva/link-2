@@ -109,13 +109,16 @@ st.markdown("""
     border: 1px solid #30363d !important; border-radius: 6px !important;
     font-family: 'Montserrat', sans-serif !important; font-size: 11px !important;
     letter-spacing: 0.5px !important; transition: all 0.2s !important;
-    height: 36px !important; padding: 0 8px !important; white-space: nowrap !important; }
+    height: 36px !important; padding: 0 8px !important; }
 .stButton button:hover { background-color: #30363d !important;
     border-color: #58a6ff !important; color: #58a6ff !important; }
-[data-testid="stSidebar"] .stButton button {
-    font-size: 10px !important;
-    height: 32px !important;
-    padding: 0 4px !important; }
+[data-testid="stSidebar"] .stButton button,
+[data-testid="stSidebar"] .stButton button p {
+    font-size: 9px !important;
+    height: auto !important;
+    padding: 4px 3px !important;
+    white-space: normal !important;
+    line-height: 1.2 !important; }
 [data-testid="stForm"] [data-testid="stFormSubmitButton"]:first-child button {
     background-color: #1f6feb !important; color: #ffffff !important;
     border-color: #58a6ff !important; }
