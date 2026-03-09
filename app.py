@@ -112,6 +112,10 @@ st.markdown("""
     height: 36px !important; padding: 0 8px !important; white-space: nowrap !important; }
 .stButton button:hover { background-color: #30363d !important;
     border-color: #58a6ff !important; color: #58a6ff !important; }
+    [data-testid="stSidebar"] .stButton button {
+    font-size: 10px !important;
+    height: 32px !important;
+    padding: 0 4px !important; }
 [data-testid="stForm"] [data-testid="stFormSubmitButton"]:first-child button {
     background-color: #1f6feb !important; color: #ffffff !important;
     border-color: #58a6ff !important; }
