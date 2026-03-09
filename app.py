@@ -478,6 +478,23 @@ def detect_calc_formula(user_input: str) -> tuple:
         if any(kw in q for kw in data["keywords"]):
             return key, data
     return None, None
+ 
+MODE_SWITCH_COMMANDS = {
+    "analyst":     ["база", "анализ", "аналитик", "данные станций", "из базы"],
+    "new_station": ["новая станция", "новый расчёт", "рассчитать станцию", "начать расчёт"],
+    "calc":        ["калькулятор", "ручной расчёт", "одна формула"],
+    "station_qa":  ["вопросы по станции", "спросить по станции", "q&a"],
+}
+
+def detect_mode_switch(user_input: str) -> str | None:
+    q = user_input.lower().strip()
+    # Универсальные команды выхода
+    if q in ("меню", "старт", "назад", "смена режима", "сменить режим", "выход"):
+        return "menu"
+    for mode, keywords in MODE_SWITCH_COMMANDS.items():
+        if any(kw in q for kw in keywords):
+            return mode
+    return None
 
 
 # ============================================================
@@ -547,6 +564,43 @@ with st.sidebar:
     st.markdown('<div class="sidebar-section">Режим</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="sidebar-item sidebar-item-active">{mode_labels.get(current_mode, "—")}</div>',
                 unsafe_allow_html=True)
+  st.markdown('<div class="sidebar-section">Сменить режим</div>', unsafe_allow_html=True)
+col_s1, col_s2 = st.sidebar.columns(2)
+with col_s1:
+    if st.button("📊 База", use_container_width=True):
+        st.session_state.mode = "analyst"
+        st.session_state.calc_state = None
+        st.session_state.history.append(("📊 Анализ станций из базы",
+            f"Переключился в режим анализа. Загружено {len(excel_data)} станций.",
+            "system"))
+        st.rerun()
+    if st.button("📐 Калькулятор", use_container_width=True):
+        st.session_state.mode = "calc"
+        st.session_state.calc_state = None
+        st.session_state.history.append(("📐 Ручной расчёт",
+            "Переключился в режим калькулятора.\n"
+            "Напишите что хотите рассчитать, например: «рассчитай ННЗТ для газовой станции»",
+            "system"))
+        st.rerun()
+with col_s2:
+    if st.button("🏭 Новая станция", use_container_width=True):
+        st.session_state.mode = "new_station"
+        st.session_state.station_profile = new_profile()
+        st.session_state.calc_state = None
+        first_step = get_next_question(st.session_state.station_profile)
+        answer = ("Переключился в режим расчёта новой станции.\n\n" +
+                  format_question(first_step)) if first_step else "—"
+        st.session_state.history.append(("🏭 Новая станция", answer, "new_station"))
+        st.rerun()
+    if st.button("💬 Q&A по станции", use_container_width=True,
+                 disabled=st.session_state.station_results is None):
+        st.session_state.mode = "station_qa"
+        st.session_state.calc_state = None
+        name = (st.session_state.station_results or {}).get("station_name", "—")
+        st.session_state.history.append(("💬 Вопросы по станции",
+            f"Переключился в режим вопросов по станции **{name}**.",
+            "new_station"))
+        st.rerun()
 
     # Станции из базы
     st.markdown('<div class="sidebar-section">Станции в базе</div>', unsafe_allow_html=True)
@@ -700,6 +754,36 @@ with st.form("chat_form", clear_on_submit=True):
 
 if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "new_station"):
     mode = st.session_state.mode
+  # Проверяем команду смены режима
+    switch_to = detect_mode_switch(user_input)
+    if switch_to == "menu":
+        st.session_state.mode = None
+        st.session_state.calc_state = None
+        st.session_state.history.append((user_input,
+            "Возвращаю в главное меню. Выберите режим.",
+            "system"))
+        st.rerun()
+    elif switch_to is not None:
+        if switch_to == "station_qa" and st.session_state.station_results is None:
+            st.session_state.history.append((user_input,
+                "⚠️ Нет рассчитанной станции. Сначала выполните расчёт в режиме «Новая станция».",
+                "system"))
+        else:
+            st.session_state.mode = switch_to
+            st.session_state.calc_state = None
+            if switch_to == "new_station":
+                st.session_state.station_profile = new_profile()
+                first_step = get_next_question(st.session_state.station_profile)
+                answer = "Переключился в режим расчёта новой станции.\n\n" + format_question(first_step)
+            elif switch_to == "analyst":
+                answer = f"Переключился в режим анализа. Загружено {len(excel_data)} станций."
+            elif switch_to == "calc":
+                answer = "Переключился в режим калькулятора. Напишите что рассчитать."
+            elif switch_to == "station_qa":
+                name = st.session_state.station_results.get("station_name", "—")
+                answer = f"Переключился в режим вопросов по станции **{name}**."
+            st.session_state.history.append((user_input, answer, "system"))
+        st.rerun()
 
     # ── Автоопределение режима по тексту ─────────────────
     if mode is None:
