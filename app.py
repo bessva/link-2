@@ -565,41 +565,41 @@ with st.sidebar:
     st.markdown(f'<div class="sidebar-item sidebar-item-active">{mode_labels.get(current_mode, "—")}</div>',
                 unsafe_allow_html=True)
   st.markdown('<div class="sidebar-section">Сменить режим</div>', unsafe_allow_html=True)
-col_s1, col_s2 = st.sidebar.columns(2)
-with col_s1:
-    if st.button("📊 База", use_container_width=True):
-        st.session_state.mode = "analyst"
-        st.session_state.calc_state = None
-        st.session_state.history.append(("📊 Анализ станций из базы",
-            f"Переключился в режим анализа. Загружено {len(excel_data)} станций.",
-            "system"))
+  col_s1, col_s2 = st.sidebar.columns(2)
+  with col_s1:
+      if st.button("📊 База", use_container_width=True):
+          st.session_state.mode = "analyst"
+          st.session_state.calc_state = None
+          st.session_state.history.append(("📊 Анализ станций из базы",
+              f"Переключился в режим анализа. Загружено {len(excel_data)} станций.",
+              "system"))
         st.rerun()
-    if st.button("📐 Калькулятор", use_container_width=True):
-        st.session_state.mode = "calc"
-        st.session_state.calc_state = None
-        st.session_state.history.append(("📐 Ручной расчёт",
-            "Переключился в режим калькулятора.\n"
-            "Напишите что хотите рассчитать, например: «рассчитай ННЗТ для газовой станции»",
-            "system"))
+      if st.button("📐 Калькулятор", use_container_width=True):
+          st.session_state.mode = "calc"
+          st.session_state.calc_state = None
+          st.session_state.history.append(("📐 Ручной расчёт",
+              "Переключился в режим калькулятора.\n"
+              "Напишите что хотите рассчитать, например: «рассчитай ННЗТ для газовой станции»",
+              "system"))
         st.rerun()
-with col_s2:
-    if st.button("🏭 Новая станция", use_container_width=True):
-        st.session_state.mode = "new_station"
-        st.session_state.station_profile = new_profile()
-        st.session_state.calc_state = None
-        first_step = get_next_question(st.session_state.station_profile)
-        answer = ("Переключился в режим расчёта новой станции.\n\n" +
-                  format_question(first_step)) if first_step else "—"
-        st.session_state.history.append(("🏭 Новая станция", answer, "new_station"))
-        st.rerun()
-    if st.button("💬 Q&A по станции", use_container_width=True,
-                 disabled=st.session_state.station_results is None):
-        st.session_state.mode = "station_qa"
-        st.session_state.calc_state = None
-        name = (st.session_state.station_results or {}).get("station_name", "—")
-        st.session_state.history.append(("💬 Вопросы по станции",
-            f"Переключился в режим вопросов по станции **{name}**.",
-            "new_station"))
+  with col_s2:
+      if st.button("🏭 Новая станция", use_container_width=True):
+          st.session_state.mode = "new_station"
+          st.session_state.station_profile = new_profile()
+          st.session_state.calc_state = None
+          first_step = get_next_question(st.session_state.station_profile)
+          answer = ("Переключился в режим расчёта новой станции.\n\n" +
+                    format_question(first_step)) if first_step else "—"
+          st.session_state.history.append(("🏭 Новая станция", answer, "new_station"))
+          st.rerun()
+      if st.button("💬 Q&A по станции", use_container_width=True,
+                   disabled=st.session_state.station_results is None):
+          st.session_state.mode = "station_qa"
+          st.session_state.calc_state = None
+          name = (st.session_state.station_results or {}).get("station_name", "—")
+          st.session_state.history.append(("💬 Вопросы по станции",
+              f"Переключился в режим вопросов по станции **{name}**.",
+              "new_station"))
         st.rerun()
 
     # Станции из базы
