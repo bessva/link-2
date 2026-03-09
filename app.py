@@ -116,9 +116,9 @@ st.markdown("""
 [data-testid="stSidebar"] .stButton button p {
     font-size: 9px !important;
     height: auto !important;
-    padding: 4px 3px !important;
+    padding: 5px 4px !important;
     white-space: normal !important;
-    line-height: 1.2 !important; }
+    line-height: 1.5 !important; }
 [data-testid="stForm"] [data-testid="stFormSubmitButton"]:first-child button {
     background-color: #1f6feb !important; color: #ffffff !important;
     border-color: #58a6ff !important; }
