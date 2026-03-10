@@ -112,8 +112,11 @@ st.markdown("""
     height: 36px !important; padding: 0 8px !important; }
 .stButton button:hover { background-color: #30363d !important;
     border-color: #58a6ff !important; color: #58a6ff !important; }
-   [data-testid="stDownloadButton"] button,
-[data-testid="stDownloadButton"] button p {
+  [data-testid="stDownloadButton"] button,
+[data-testid="stDownloadButton"] button p,
+[data-testid="stDownloadButton"] button:focus,
+[data-testid="stDownloadButton"] button:focus-visible,
+[data-testid="stDownloadButton"] button:active {
     background-color: #21262d !important;
     color: #c9d1d9 !important;
     border: 1px solid #30363d !important;
@@ -121,15 +124,14 @@ st.markdown("""
     height: auto !important;
     padding: 6px 8px !important;
     white-space: normal !important;
-    line-height: 1.2 !important; }
+    line-height: 1.2 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 6px !important; }
 [data-testid="stDownloadButton"] button:hover {
     background-color: #30363d !important;
     border-color: #58a6ff !important;
     color: #58a6ff !important; }
-[data-testid="stDownloadButton"] button:focus,
-[data-testid="stDownloadButton"] button:focus-visible {
-    outline: none !important;
-    box-shadow: none !important; }
 [data-testid="stSidebar"] .stButton button,
 [data-testid="stSidebar"] .stButton button p {
     font-size: 11px !important;
