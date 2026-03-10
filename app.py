@@ -112,6 +112,11 @@ st.markdown("""
     height: 36px !important; padding: 0 8px !important; }
 .stButton button:hover { background-color: #30363d !important;
     border-color: #58a6ff !important; color: #58a6ff !important; }
+   [data-testid="stDownloadButton"] button {
+    background-color: transparent !important;
+    color: #58a6ff !important;
+    border-color: #58a6ff !important;
+    font-size: 11px !important; }
 [data-testid="stSidebar"] .stButton button,
 [data-testid="stSidebar"] .stButton button p {
     font-size: 11px !important;
