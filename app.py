@@ -677,7 +677,7 @@ with st.sidebar:
                   "station_results", "station_context"]:
             st.session_state[k] = None if k != "history" else []
         st.rerun()
-     with open(os.path.join(BASE_DIR, "Используемые формулы.pdf"), "rb") as f:
+    with open(os.path.join(BASE_DIR, "Используемые формулы.pdf"), "rb") as f:
         st.download_button(
             label="📋 Справочник формул",
             data=f.read(),
