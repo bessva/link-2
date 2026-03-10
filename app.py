@@ -672,18 +672,18 @@ with st.sidebar:
         st.markdown('<div class="sidebar-item">Нет документов в knowledge/</div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("🗑  Очистить чат"):
-        for k in ["history", "mode", "calc_state", "station_profile",
-                  "station_results", "station_context"]:
-            st.session_state[k] = None if k != "history" else []
-        st.rerun()
     with open(os.path.join(BASE_DIR, "Используемые формулы.pdf"), "rb") as f:
         st.download_button(
             label="📋 Справочник формул",
             data=f.read(),
             file_name="formulas_reference.pdf",
             mime="application/pdf"
-        )  
+        )
+    if st.button("🗑  Очистить чат"):
+        for k in ["history", "mode", "calc_state", "station_profile",
+                  "station_results", "station_context"]:
+            st.session_state[k] = None if k != "history" else []
+        st.rerun()  
 
     st.markdown('<div class="sidebar-section">Статус</div>', unsafe_allow_html=True)
     try:
