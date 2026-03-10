@@ -858,7 +858,7 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 profile = apply_auto_fields(profile)
                 next_step = get_next_question(profile)
                 if next_step:
-                    answer = f"Пропущено, использую значение по умолчанию: **{step['default']}**\n\n{format_question(next_step)}"
+                    answer = f"Пропущено, использую значение по умолчанию: {step['default']}\n\n{format_question(next_step)}"
                 else:
                     answer = (f"Пропущено. Все данные собраны.\n\n"
                               f"{profile_summary_text(profile)}\n\n"
@@ -894,11 +894,11 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 profile = apply_auto_fields(profile)
                 next_step = get_next_question(profile)
                 if next_step:
-                    answer = f"✓ Принято.\n\n{format_question(next_step)}"
+                    answer = f"Принято.\n\n{format_question(next_step)}"
                 else:
-                    answer = ("✓ Принято. Все данные собраны.\n\n"
+                    answer = ("Принято. Все данные собраны.\n\n"
                               f"{profile_summary_text(profile)}\n\n"
-                              "Нажмите Отправить ещё раз для запуска расчёта.")
+                              "Напишите что-нибудь в чат, чтобы сформировать отчет")
             st.session_state.station_profile = profile
             st.session_state.history.append((user_input, answer, "new_station"))
 
