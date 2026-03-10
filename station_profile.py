@@ -565,7 +565,7 @@ def format_question(step: dict) -> str:
         lines.append("*(да / нет)*")
 
     if (default := step.get("default")) is not None:
-        lines.append(f"*По умолчанию: {default} — нажмите Enter чтобы пропустить*")
+        lines.append(f"*По умолчанию: {default} — нажмите кнопку «Пропустить»*")
 
     return "\n\n".join(lines)
 
