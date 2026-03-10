@@ -113,8 +113,6 @@ st.markdown("""
 .stButton button:hover { background-color: #30363d !important;
     border-color: #58a6ff !important; color: #58a6ff !important; }
    [data-testid="stDownloadButton"] button {
-    background-color: transparent !important;
-    color: #58a6ff !important;
     border-color: #58a6ff !important;
     font-size: 11px !important;
     height: auto !important;
