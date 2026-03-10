@@ -116,7 +116,13 @@ st.markdown("""
     background-color: transparent !important;
     color: #58a6ff !important;
     border-color: #58a6ff !important;
-    font-size: 11px !important; }
+    font-size: 9px !important;
+    height: auto !important;
+    padding: 4px 3px !important;
+    white-space: normal !important;
+    line-height: 1.2 !important; }
+[data-testid="stDownloadButton"] button p {
+    font-size: 9px !important; }
 [data-testid="stSidebar"] .stButton button,
 [data-testid="stSidebar"] .stButton button p {
     font-size: 11px !important;
