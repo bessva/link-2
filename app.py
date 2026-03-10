@@ -906,15 +906,15 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 if not remaining:
                     try:
                         result = cs["data"]["calc"](**collected)
-                        answer = (f"📐 **{cs['data']['formula']}**\n"
+                        answer = (f"📐 {cs['data']['formula']}\n"
                                   f"Параметры: {collected}\n\n"
-                                  f"✅ **Результат: {result:.3f} {cs['data']['units']}**")
+                                  f"✅ Результат: {result:.3f} {cs['data']['units']}")
                     except Exception as e:
                         answer = f"❌ Ошибка расчёта: {e}"
                     st.session_state.calc_state = None
                 else:
                     next_p = remaining[0]
-                    answer = f"✓ Принято. Введите: **{cs['data']['prompts'][next_p]}**"
+                    answer = f"Принято. Введите: {cs['data']['prompts'][next_p]}"
             else:
                 answer = "⚠️ Введите числовое значение."
             st.session_state.history.append((user_input, answer, "calc"))
@@ -931,7 +931,7 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 st.session_state.history.append((user_input, answer, "calc"))
                 st.rerun()
             elif calc_key == "formula_list":
-                answer = "📐 **Доступные формулы в калькуляторе:**\n\n" + \
+                answer = "📐 Доступные формулы в калькуляторе:\n\n" + \
                     "\n".join(f"- {d['label']}" for d in CALC_FORMULAS.values())
                 st.session_state.history.append((user_input, answer, "calc"))
                 st.rerun()
@@ -942,9 +942,9 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                     collected = dict(zip(params, nums[:len(params)]))
                     try:
                         result = calc_data["calc"](**collected)
-                        answer = (f"📐 **{calc_data['formula']}**\n"
+                        answer = (f"📐 {calc_data['formula']}\n"
                                   f"Параметры: {collected}\n\n"
-                                  f"✅ **Результат: {result:.3f} {calc_data['units']}**")
+                                  f"✅ Результат: {result:.3f} {calc_data['units']}")
                     except Exception as e:
                         answer = f"❌ Ошибка: {e}"
                 else:
@@ -954,8 +954,8 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                         "data": calc_data,
                         "collected_params": {},
                     }
-                    answer = (f"📐 Расчёт: **{calc_data['formula']}**\n\n"
-                              f"Введите: **{calc_data['prompts'][first_p]}**")
+                    answer = (f"📐 Расчёт: {calc_data['formula']}\n\n"
+                              f"Введите: {calc_data['prompts'][first_p]}")
                 st.session_state.history.append((user_input, answer, "calc"))
             else:
                 answer = ("Не распознана формула. Попробуйте написать, например:\n"
