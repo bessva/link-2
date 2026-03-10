@@ -683,7 +683,7 @@ with st.sidebar:
     st.markdown("<br>", unsafe_allow_html=True)
     with open(os.path.join(BASE_DIR, "Используемые формулы.pdf"), "rb") as f:
         st.download_button(
-            label="📋 Справочник формул",
+            label="Справочник формул",
             data=f.read(),
             file_name="formulas_reference.pdf",
             mime="application/pdf"
