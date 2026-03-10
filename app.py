@@ -470,6 +470,19 @@ CALC_FORMULAS = {
         "calc": lambda Q_plan, Q_ust, n_mes: (Q_plan / (Q_ust * n_mes)) * 100 if Q_ust * n_mes > 0 else 0,
         "units": "%",
     },
+    "onzt": {
+        "label":   "ОНЗТ — общий норматив запаса топлива",
+        "keywords": ["онзт", "общий норматив", "общий запас"],
+        "formula": "ОНЗТ = ННЗТ + НЭЗТ (+ НВЗТ для угля/торфа)",
+        "params":  ["NNZT", "NEZT", "NVZT"],
+        "prompts": {
+            "NNZT": "ННЗТ — неснижаемый норматив (т.н.т.)",
+            "NEZT": "НЭЗТ — эксплуатационный норматив (т.н.т.)",
+            "NVZT": "НВЗТ — вспомогательный норматив (т.н.т., введите 0 если нет)",
+        },
+        "calc": lambda NNZT, NEZT, NVZT: NNZT + NEZT + NVZT,
+        "units": "т.н.т.",
+    },
 }
 
 CALC_TRIGGER_WORDS = [
@@ -479,13 +492,15 @@ CALC_TRIGGER_WORDS = [
 
 
 def detect_calc_formula(user_input: str) -> tuple:
-    """
-    Возвращает (formula_key, formula_data) или (None, None).
-    Срабатывает только если есть слово-триггер расчёта.
-    """
     q = user_input.lower()
     if not any(kw in q for kw in CALC_TRIGGER_WORDS):
         return None, None
+    # НЭЗТ без уточнений — возвращаем специальный ключ-подсказку
+    if "нэзт" in q and not any(w in q for w in [
+        "менее 25", "<25", "малая", "газ", "трубопровод",
+        "уголь", "торф", "дизель", "более 25", "≥25", "б.в.", "бв"
+    ]):
+        return "nezt_hint", None
     priority = [
         "kium_t", "nazt_large", "nazt_small", "nezt_bv",
         "nnzt_pipeline", "nnzt_solid",
@@ -898,7 +913,17 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
             st.session_state.history.append((user_input, answer, "calc"))
         else:
             calc_key, calc_data = detect_calc_formula(user_input)
-            if calc_key:
+          calc_key, calc_data = detect_calc_formula(user_input)
+            if calc_key == "nezt_hint":
+                answer = (
+                    "Уточните какой НЭЗТ рассчитать:\n\n"
+                    "- «рассчитай НЭЗТ менее 25 МВт» — малые ТЭС\n"
+                    "- «рассчитай НЭЗТ газ» или «рассчитай НЭЗТ трубопровод» — крупные ТЭС, газ/мазут\n"
+                    "- «рассчитай НЭЗТ уголь» или «рассчитай НЭЗТ торф» — крупные ТЭС, твёрдое топливо\n"
+                    "- «рассчитай НЭЗТ б.в.» — базовая величина НЭЗТб.в. (Ф.25)"
+                )
+                st.session_state.history.append((user_input, answer, "calc"))
+            elif calc_key:
                 nums = [float(n) for n in re.findall(r"[-+]?\d*\.?\d+", user_input.replace(",", "."))]
                 params = calc_data["params"]
                 if len(nums) >= len(params):
