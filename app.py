@@ -122,6 +122,10 @@ st.markdown("""
       padding: 6px 8px !important;
       white-space: normal !important;
       line-height: 1.2 !important; }
+    [data-testid="stDownloadButton"] button:hover {
+      background-color: #30363d !important;
+      border-color: #58a6ff !important;
+      color: #58a6ff !important; }
 [data-testid="stSidebar"] .stButton button,
 [data-testid="stSidebar"] .stButton button p {
     font-size: 11px !important;
