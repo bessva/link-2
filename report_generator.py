@@ -192,13 +192,13 @@ def build_report_markdown(profile: dict, results: dict) -> str:
     units    = results.get("единицы", "т.н.т.")
     md       = []
 
-    md.append(f"## 📊 Нормативы запасов топлива — {profile.get('name', '—')}")
-    md.append(f"*Расчёт по Приказу Минэнерго №1062 (ред. 25.06.2024) | {now}*")
+    md.append(f"Нормативы запасов топлива — {profile.get('name', '—')}")
+    md.append(f"Расчёт по Приказу Минэнерго №1062 (ред. 25.06.2024) | {now}")
     md.append("")
 
     # Параметры станции
-    md.append("### ⚙️ Параметры станции")
-    md.append(f"- **Мощность:** {profile.get('power_mw', '—')} МВт "
+    md.append("Параметры станции")
+    md.append(f"- Мощность:** {profile.get('power_mw', '—')} МВт "
               f"({'≥25 МВт' if category == 'large' else '<25 МВт'})")
     md.append(f"- **Топливо:** {FUEL_NAMES.get(profile.get('main_fuel', ''), '—')}")
     md.append(f"- **Доставка:** {DELIVERY_NAMES.get(profile.get('delivery_type', ''), '—')}")
@@ -207,7 +207,7 @@ def build_report_markdown(profile: dict, results: dict) -> str:
     md.append("")
 
     # Результаты
-    md.append("### 📐 Результаты расчёта")
+    md.append("Результаты расчёта")
 
     nnzt = results.get("ННЗТ_тыс_т", results.get("ННЗТ_т", "—"))
     nezt = results.get("НЭЗТ_т", results.get("НЭЗТ_янв_тыс_т", "—"))
@@ -236,7 +236,7 @@ def build_report_markdown(profile: dict, results: dict) -> str:
     md.append("")
 
     # Таблица 12 месяцев
-    md.append("### 📅 Нормативы по месяцам")
+    md.append("Нормативы по месяцам")
     table = results.get("таблица_12_месяцев", [])
     if table:
         headers = list(table[0].keys())
