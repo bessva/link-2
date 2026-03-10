@@ -858,7 +858,7 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 st.session_state.station_profile = profile
                 st.session_state.mode = "station_qa"
                 answer = build_report_markdown(profile, results)
-                answer += "\n\n---\n✅ **Расчёт завершён.** Теперь вы можете задавать вопросы по станции."
+                answer += "\n\n---\n Расчёт завершён. Теперь вы можете задавать вопросы по станции."
             except Exception as e:
                 answer = f"❌ Ошибка расчёта: {e}"
             st.session_state.history.append((user_input, answer, "new_station"))
@@ -907,7 +907,6 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                     try:
                         result = cs["data"]["calc"](**collected)
                         answer = (f"📐 {cs['data']['formula']}\n"
-                                  f"Параметры: {collected}\n\n"
                                   f"✅ Результат: {result:.3f} {cs['data']['units']}")
                     except Exception as e:
                         answer = f"❌ Ошибка расчёта: {e}"
@@ -943,7 +942,6 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                     try:
                         result = calc_data["calc"](**collected)
                         answer = (f"📐 {calc_data['formula']}\n"
-                                  f"Параметры: {collected}\n\n"
                                   f"✅ Результат: {result:.3f} {calc_data['units']}")
                     except Exception as e:
                         answer = f"❌ Ошибка: {e}"
