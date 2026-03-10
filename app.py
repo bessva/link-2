@@ -492,12 +492,14 @@ CALC_FORMULAS = {
 
 CALC_TRIGGER_WORDS = [
     "рассчитай", "посчитай", "вычисли", "расчёт", "расчет",
-    "калькулятор", "формула", "по формуле", "сколько будет"
+    "калькулятор", "формула", "по формуле", "сколько будет", "список формул", "что умеешь", "что можешь посчитать", "дай все формулы"
 ]
 
 
 def detect_calc_formula(user_input: str) -> tuple:
     q = user_input.lower()
+    if any(w in q for w in ["список формул", "какие формулы", "что умеешь", "что можешь посчитать", "дай все формулы"]):
+        return "formula_list", None
     if not any(kw in q for kw in CALC_TRIGGER_WORDS):
         return None, None
     # НЭЗТ без уточнений — возвращаем специальный ключ-подсказку
@@ -927,6 +929,15 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                     "- «рассчитай НЭЗТ б.в.» — базовая величина НЭЗТб.в. (Ф.25)"
                 )
                 st.session_state.history.append((user_input, answer, "calc"))
+            if calc_key == "nezt_hint":
+                answer = (...)
+                st.session_state.history.append((user_input, answer, "calc"))
+            elif calc_key == "formula_list":   # ← вот сюда
+                answer = "📐 **Доступные формулы в калькуляторе:**\n\n" + \
+                    "\n".join(f"- {d['label']}" for d in CALC_FORMULAS.values())
+                st.session_state.history.append((user_input, answer, "calc"))
+            elif calc_key:
+                ...
             elif calc_key:
                 nums = [float(n) for n in re.findall(r"[-+]?\d*\.?\d+", user_input.replace(",", "."))]
                 params = calc_data["params"]
