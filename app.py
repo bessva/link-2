@@ -113,19 +113,23 @@ st.markdown("""
 .stButton button:hover { background-color: #30363d !important;
     border-color: #58a6ff !important; color: #58a6ff !important; }
    [data-testid="stDownloadButton"] button,
-  [data-testid="stDownloadButton"] button p {
-      background-color: #21262d !important;
-      color: #c9d1d9 !important;
-      border: 1px solid #30363d !important;
-      font-size: 11px !important;
-      height: auto !important;
-      padding: 6px 8px !important;
-      white-space: normal !important;
-      line-height: 1.2 !important; }
-    [data-testid="stDownloadButton"] button:hover {
-      background-color: #30363d !important;
-      border-color: #58a6ff !important;
-      color: #58a6ff !important; }
+[data-testid="stDownloadButton"] button p {
+    background-color: #21262d !important;
+    color: #c9d1d9 !important;
+    border: 1px solid #30363d !important;
+    font-size: 11px !important;
+    height: auto !important;
+    padding: 6px 8px !important;
+    white-space: normal !important;
+    line-height: 1.2 !important; }
+[data-testid="stDownloadButton"] button:hover {
+    background-color: #30363d !important;
+    border-color: #58a6ff !important;
+    color: #58a6ff !important; }
+[data-testid="stDownloadButton"] button:focus,
+[data-testid="stDownloadButton"] button:focus-visible {
+    outline: none !important;
+    box-shadow: none !important; }
 [data-testid="stSidebar"] .stButton button,
 [data-testid="stSidebar"] .stButton button p {
     font-size: 11px !important;
@@ -683,7 +687,7 @@ with st.sidebar:
     st.markdown("<br>", unsafe_allow_html=True)
     with open(os.path.join(BASE_DIR, "Используемые формулы.pdf"), "rb") as f:
         st.download_button(
-            label="Справочник формул",
+            label="📋 Справочник формул",
             data=f.read(),
             file_name="formulas_reference.pdf",
             mime="application/pdf"
