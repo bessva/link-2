@@ -906,8 +906,7 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                 if not remaining:
                     try:
                         result = cs["data"]["calc"](**collected)
-                        answer = (f"📐 {cs['data']['formula']}\n"
-                                  f"✅ Результат: {result:.3f} {cs['data']['units']}")
+                        answer = (f"Результат: {result:.3f} {cs['data']['units']}")
                     except Exception as e:
                         answer = f"❌ Ошибка расчёта: {e}"
                     st.session_state.calc_state = None
@@ -941,8 +940,7 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                     collected = dict(zip(params, nums[:len(params)]))
                     try:
                         result = calc_data["calc"](**collected)
-                        answer = (f"📐 {calc_data['formula']}\n"
-                                  f"✅ Результат: {result:.3f} {calc_data['units']}")
+                        answer = (f"Результат: {result:.3f} {calc_data['units']}")
                     except Exception as e:
                         answer = f"❌ Ошибка: {e}"
                 else:
