@@ -675,9 +675,9 @@ with st.sidebar:
     if st.button("🗑  Очистить чат"):
         for k in ["history", "mode", "calc_state", "station_profile",
                   "station_results", "station_context"]:
-            st.session_state[k] = None if k != "history" else 
+            st.session_state[k] = None if k != "history" else []
         st.rerun()
-     with open(os.path.join(BASE_DIR, "formulas_reference.pdf"), "rb") as f:
+     with open(os.path.join(BASE_DIR, "Используемые формулы.pdf"), "rb") as f:
         st.download_button(
             label="📋 Справочник формул",
             data=f.read(),
