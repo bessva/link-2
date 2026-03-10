@@ -929,15 +929,12 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                     "- «рассчитай НЭЗТ б.в.» — базовая величина НЭЗТб.в. (Ф.25)"
                 )
                 st.session_state.history.append((user_input, answer, "calc"))
-            if calc_key == "nezt_hint":
-                answer = (...)
-                st.session_state.history.append((user_input, answer, "calc"))
-            elif calc_key == "formula_list":   # ← вот сюда
+                st.rerun()
+            elif calc_key == "formula_list":
                 answer = "📐 **Доступные формулы в калькуляторе:**\n\n" + \
                     "\n".join(f"- {d['label']}" for d in CALC_FORMULAS.values())
                 st.session_state.history.append((user_input, answer, "calc"))
-            elif calc_key:
-                ...
+                st.rerun()
             elif calc_key:
                 nums = [float(n) for n in re.findall(r"[-+]?\d*\.?\d+", user_input.replace(",", "."))]
                 params = calc_data["params"]
@@ -959,12 +956,13 @@ if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "
                     }
                     answer = (f"📐 Расчёт: **{calc_data['formula']}**\n\n"
                               f"Введите: **{calc_data['prompts'][first_p]}**")
+                st.session_state.history.append((user_input, answer, "calc"))
             else:
                 answer = ("Не распознана формула. Попробуйте написать, например:\n"
                           "«рассчитай ННЗТ для газовой станции» или «посчитай НЭЗТ уголь»\n\n"
                           "Доступные расчёты:\n" +
                           "\n".join(f"- {d['label']}" for d in CALC_FORMULAS.values()))
-            st.session_state.history.append((user_input, answer, "calc"))
+                st.session_state.history.append((user_input, answer, "calc"))
 
     # ── РЕЖИМ: АНАЛИТИК ───────────────────────────────────
     else:
