@@ -549,7 +549,16 @@ def detect_mode_switch(user_input: str) -> str | None:
         if any(kw in q for kw in keywords):
             return mode
     return None
-
+def check_easter_egg(user_input: str) -> str | None:
+    q = user_input.lower().strip()
+    if any(w in q for w in ["кто лучший куратор", "лучший куратор"]):
+        st.session_state.easter_egg_count = st.session_state.get("easter_egg_count", 0) + 1
+        if st.session_state.easter_egg_count >= 3:
+            st.session_state.easter_egg_count = 0
+            return "И.Е."
+        else:
+            return "Я специализируюсь на энергетике и не отвечаю на вопросы вне этой темы."
+    return None
 
 # ============================================================
 # 🧠 СИСТЕМНЫЕ ПРОМПТЫ GIGACHAT
@@ -585,6 +594,7 @@ def init_session():
         "station_profile": None,     # dict (текущий профиль в сборке)
         "station_results": None,     # dict (результаты расчёта)
         "station_context": None,     # str (контекст для GigaChat)
+        "easter_egg_count": 0,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -806,6 +816,14 @@ with st.form("chat_form", clear_on_submit=True):
 
 if (submitted and user_input.strip()) or (skipped and st.session_state.mode == "new_station"):
     mode = st.session_state.mode
+  
+    easter = check_easter_egg(user_input)
+    if easter is not None:
+        st.session_state.history.append((user_input, easter, "system"))
+        st.rerun()
+
+    # Проверяем команду смены режима
+    switch_to = detect_mode_switch(user_input)
 
     # Проверяем команду смены режима
     switch_to = detect_mode_switch(user_input)
